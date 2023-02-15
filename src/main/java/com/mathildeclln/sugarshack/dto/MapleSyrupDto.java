@@ -1,6 +1,6 @@
-package com.mathildeclln.sugarshack.controller;
+package com.mathildeclln.sugarshack.dto;
 
-import com.mathildeclln.sugarshack.MapleType;
+import com.mathildeclln.sugarshack.model.MapleType;
 
 public class MapleSyrupDto {
     private String id;

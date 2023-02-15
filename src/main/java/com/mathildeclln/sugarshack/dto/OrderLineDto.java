@@ -1,4 +1,4 @@
-package com.mathildeclln.sugarshack.controller;
+package com.mathildeclln.sugarshack.dto;
 
 public class OrderLineDto {
     private String productId;

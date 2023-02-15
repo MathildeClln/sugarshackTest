@@ -1,5 +1,6 @@
 package com.mathildeclln.sugarshack.controller;
 
+import com.mathildeclln.sugarshack.dto.MapleSyrupDto;
 import com.mathildeclln.sugarshack.service.MapleSyrupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,29 +1,20 @@
-package com.mathildeclln.sugarshack.model;
+package com.mathildeclln.sugarshack.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.mathildeclln.sugarshack.model.MapleType;
 
-@Entity
-public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class CatalogueItemDto {
+    private String id;
     private String name;
-    private String description;
     private String image;
     private double price;
+    private int maxQty;
     private MapleType type;
 
-    public Product() {
-    }
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -33,14 +24,6 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getImage() {
@@ -57,6 +40,14 @@ public class Product {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getMaxQty() {
+        return maxQty;
+    }
+
+    public void setMaxQty(int maxQty) {
+        this.maxQty = maxQty;
     }
 
     public MapleType getType() {
