@@ -5,6 +5,7 @@ import com.mathildeclln.sugarshack.model.OrderLine;
 import com.mathildeclln.sugarshack.model.Product;
 import com.mathildeclln.sugarshack.repository.OrderLineRepository;
 import com.mathildeclln.sugarshack.repository.ProductRepository;
+import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,5 +38,33 @@ public class CartLineService {
             }
         }
         return result;
+    }
+
+    public void addToCart(String productId){
+        OrderLine line;
+
+        line = orderRepo.findByProductId(productId);
+
+        if(line != null){
+            int qty = line.getQty()+1;
+            line.setQty(qty);
+            orderRepo.save(line);
+        }
+        else{
+            line = new OrderLine();
+
+            OrderLine max = orderRepo.findFirstByOrderByIdDesc();
+            if(max != null){
+                line.setId(max.getId()+1);
+            }else{
+                line.setId(1);
+            }
+
+            line.setQty(1);
+            line.setProductId(productId);
+            line.setError("");
+            line.setValid(false);
+            orderRepo.save(line);
+        }
     }
 }
