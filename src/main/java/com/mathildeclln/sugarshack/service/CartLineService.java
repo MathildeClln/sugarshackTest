@@ -8,6 +8,7 @@ import com.mathildeclln.sugarshack.repository.ProductRepository;
 import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,13 @@ public class CartLineService {
             line.setError("");
             line.setValid(false);
             orderRepo.save(line);
+        }
+    }
+
+    @Transactional
+    public void removeFromCart(String productId){
+        if(orderRepo.existsByProductId(productId)){
+            orderRepo.deleteByProductId(productId);
         }
     }
 }
