@@ -1,9 +1,6 @@
 package com.mathildeclln.sugarshack.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class OrderLine {
@@ -11,8 +8,8 @@ public class OrderLine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String productId;
-    private String orderId;
     private int qty;
+    @Column(nullable = true)
     private boolean valid;
     private String error;
 
@@ -33,14 +30,6 @@ public class OrderLine {
 
     public void setProductId(String productId) {
         this.productId = productId;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
     }
 
     public boolean isValid() {
