@@ -5,20 +5,10 @@ import jakarta.persistence.*;
 @Entity
 public class OrderLine {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
     private String productId;
     private int qty;
 
     public OrderLine() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getProductId() {

@@ -13,19 +13,18 @@ import org.springframework.stereotype.Service;
 public class MapleSyrupService {
 
     @Autowired
-    private ProductRepository prodrepo;
+    private ProductRepository productRepository;
     @Autowired
-    private StockRepository stockrepo;
+    private StockRepository stockRepository;
 
     public MapleSyrupDto getInfo(String productId){
         MapleSyrupDto result = new MapleSyrupDto();
-        Product prod = new Product();
-        prod = prodrepo.findById(Integer.valueOf(productId)).orElse(null);
+        Product prod = productRepository.findById(productId);
 
         if(prod != null){
-            Stock stock = stockrepo.findByProductId(productId);
+            Stock stock = stockRepository.findByProductId(productId);
             if(stock != null){
-                result.setId(String.valueOf(prod.getId()));
+                result.setId(prod.getId());
                 result.setName(prod.getName());
                 result.setImage(prod.getImage());
                 result.setType(prod.getType());

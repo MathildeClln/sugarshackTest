@@ -1,7 +1,7 @@
 package com.mathildeclln.sugarshack.controller;
 
+import com.mathildeclln.sugarshack.dto.OrderLineDto;
 import com.mathildeclln.sugarshack.dto.OrderValidationResponseDto;
-import com.mathildeclln.sugarshack.model.OrderLine;
 import com.mathildeclln.sugarshack.service.OrderLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +18,7 @@ public class OrderLineController {
     private OrderLineService orderLineService;
 
     @PostMapping
-    public OrderValidationResponseDto placeOrder(@RequestBody ArrayList<OrderLine> lines){
+    public OrderValidationResponseDto placeOrder(@RequestBody ArrayList<OrderLineDto> lines){
         return orderLineService.placeOrder(lines);
     }
 }

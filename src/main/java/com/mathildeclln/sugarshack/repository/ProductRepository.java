@@ -10,7 +10,7 @@ import java.util.ArrayList;
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Integer> {
 
-    Product findById(int id);
+    Product findById(String id);
 
     ArrayList<Product> findAllByType(MapleType type);
 }

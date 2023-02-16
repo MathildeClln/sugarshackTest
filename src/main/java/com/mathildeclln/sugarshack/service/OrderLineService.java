@@ -1,9 +1,7 @@
 package com.mathildeclln.sugarshack.service;
 
+import com.mathildeclln.sugarshack.dto.OrderLineDto;
 import com.mathildeclln.sugarshack.dto.OrderValidationResponseDto;
-import com.mathildeclln.sugarshack.model.OrderLine;
-import com.mathildeclln.sugarshack.repository.OrderLineRepository;
-import com.mathildeclln.sugarshack.repository.ProductRepository;
 import com.mathildeclln.sugarshack.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,12 +13,12 @@ public class OrderLineService {
     @Autowired
     private StockRepository stockRepo;
 
-    public OrderValidationResponseDto placeOrder(ArrayList<OrderLine> orderLines){
+    public OrderValidationResponseDto placeOrder(ArrayList<OrderLineDto> orderLines){
         OrderValidationResponseDto result = new OrderValidationResponseDto();
         boolean valid = true;
         ArrayList<String> errors = new ArrayList<>();
 
-        for(OrderLine line: orderLines){
+        for(OrderLineDto line: orderLines){
             int maxQty;
             maxQty = stockRepo.findByProductId(line.getProductId())
                                 .getStock();

@@ -14,19 +14,19 @@ import java.util.ArrayList;
 @Service
 public class CatalogueItemService {
     @Autowired
-    private ProductRepository prodrepo;
+    private ProductRepository productRepository;
     @Autowired
-    private StockRepository stockrepo;
+    private StockRepository stockRepository;
 
     public ArrayList<CatalogueItemDto> getCatalogue(MapleType type){
         ArrayList<CatalogueItemDto> result = new ArrayList<>();
-        ArrayList<Product> prod = prodrepo.findAllByType(type);
+        ArrayList<Product> prod = productRepository.findAllByType(type);
 
         for(Product p: prod){
-            Stock stock = stockrepo.findByProductId(String.valueOf(p.getId()));
+            Stock stock = stockRepository.findByProductId(p.getId());
             if(stock != null){
                 CatalogueItemDto cat = new CatalogueItemDto();
-                cat.setId(String.valueOf(p.getId()));
+                cat.setId(p.getId());
                 cat.setName(p.getName());
                 cat.setImage(p.getImage());
                 cat.setType(p.getType());
