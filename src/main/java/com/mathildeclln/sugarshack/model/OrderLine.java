@@ -9,9 +9,6 @@ public class OrderLine {
     private int id;
     private String productId;
     private int qty;
-    @Column(nullable = true)
-    private boolean valid;
-    private String error;
 
     public OrderLine() {
     }
@@ -32,14 +29,6 @@ public class OrderLine {
         this.productId = productId;
     }
 
-    public boolean isValid() {
-        return valid;
-    }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
-
     public int getQty() {
         return qty;
     }
@@ -48,11 +37,4 @@ public class OrderLine {
         this.qty = qty;
     }
 
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
 }

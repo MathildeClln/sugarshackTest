@@ -27,4 +27,9 @@ public class CartLineController {
     public void removeFromCart(String productId){
         cartService.removeFromCart(productId);
     }
+
+    @PatchMapping
+    public void changeQty(String productId, int newQty){
+        cartService.changeQty(productId, newQty);
+    }
 }

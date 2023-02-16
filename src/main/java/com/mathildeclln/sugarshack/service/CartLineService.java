@@ -63,8 +63,6 @@ public class CartLineService {
 
             line.setQty(1);
             line.setProductId(productId);
-            line.setError("");
-            line.setValid(false);
             orderRepo.save(line);
         }
     }
@@ -73,6 +71,14 @@ public class CartLineService {
     public void removeFromCart(String productId){
         if(orderRepo.existsByProductId(productId)){
             orderRepo.deleteByProductId(productId);
+        }
+    }
+
+    public void changeQty(String productId, int newQty){
+        OrderLine line = orderRepo.findByProductId(productId);
+        if(line != null){
+            line.setQty(newQty);
+            orderRepo.save(line);
         }
     }
 }
