@@ -2,8 +2,10 @@ package com.mathildeclln.sugarshack.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 
 @Entity
+@AllArgsConstructor
 public class Product {
     @Id
     private String id;

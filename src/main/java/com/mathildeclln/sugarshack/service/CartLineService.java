@@ -19,12 +19,18 @@ public class CartLineService {
     @Autowired
     private ProductRepository productRepository;
 
+    public CartLineService(OrderLineRepository orderLineRepository, ProductRepository productRepository){
+        this.orderLineRepository = orderLineRepository;
+        this.productRepository = productRepository;
+    }
+
     public ArrayList<CartLineDto> getCart(){
         ArrayList<CartLineDto> result = new ArrayList<>();
         List<OrderLine> order = orderLineRepository.findAll();
 
         for(OrderLine line: order){
-            Product p = productRepository.findById(line.getProductId());
+            Product p = productRepository.findById(line.getProductId()).orElse(null);
+
             if(p != null){
                 CartLineDto c = new CartLineDto();
                 c.setProductId(line.getProductId());
@@ -35,6 +41,18 @@ public class CartLineService {
 
                 result.add(c);
             }
+        }
+        return result;
+    }
+
+    public CartLineDto getCartById (String productId){
+        CartLineDto result = null;
+
+        OrderLine orderLine = orderLineRepository.findByProductId(productId);
+        Product product = productRepository.findById(productId).orElse(null);
+
+        if(product != null & orderLine != null){
+            result = new CartLineDto(product, orderLine);
         }
         return result;
     }

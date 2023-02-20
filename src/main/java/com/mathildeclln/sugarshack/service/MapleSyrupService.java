@@ -19,17 +19,18 @@ public class MapleSyrupService {
 
     public MapleSyrupDto getInfo(String productId){
         MapleSyrupDto result = new MapleSyrupDto();
-        Product prod = productRepository.findById(productId);
+        Product product;
+        product = productRepository.findById(productId).orElse(null);
 
-        if(prod != null){
+        if(product != null){
             Stock stock = stockRepository.findByProductId(productId);
             if(stock != null){
-                result.setId(prod.getId());
-                result.setName(prod.getName());
-                result.setImage(prod.getImage());
-                result.setType(prod.getType());
-                result.setPrice(prod.getPrice());
-                result.setDescription(prod.getDescription());
+                result.setId(product.getId());
+                result.setName(product.getName());
+                result.setImage(product.getImage());
+                result.setType(product.getType());
+                result.setPrice(product.getPrice());
+                result.setDescription(product.getDescription());
                 result.setStock(stock.getStock());
 
                 return result;

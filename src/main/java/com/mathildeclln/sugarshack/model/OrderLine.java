@@ -1,8 +1,12 @@
 package com.mathildeclln.sugarshack.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 @Entity
+@AllArgsConstructor
+@Builder
 public class OrderLine {
     @Id
     private String productId;
