@@ -1,6 +1,7 @@
 package com.mathildeclln.sugarshack.service;
 
 import com.mathildeclln.sugarshack.dto.CartLineDto;
+import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
 import com.mathildeclln.sugarshack.model.OrderLine;
 import com.mathildeclln.sugarshack.model.Product;
 import com.mathildeclln.sugarshack.repository.OrderLineRepository;
@@ -24,23 +25,25 @@ public class CartLineService {
         this.productRepository = productRepository;
     }
 
-    public ArrayList<CartLineDto> getCart(){
+    public ArrayList<CartLineDto> getCart() throws ProductNotFoundException {
         ArrayList<CartLineDto> result = new ArrayList<>();
-        List<OrderLine> order = orderLineRepository.findAll();
+        List<OrderLine> orderLines = orderLineRepository.findAll();
 
-        for(OrderLine line: order){
-            Product p = productRepository.findById(line.getProductId()).orElse(null);
+        for (OrderLine orderLine : orderLines) {
+            Product product = productRepository.findById(orderLine.getProductId()).orElse(null);
 
-            if(p != null){
-                CartLineDto c = new CartLineDto(p, line);
+            if (product != null) {
+                CartLineDto c = new CartLineDto(product, orderLine);
 
                 result.add(c);
+            } else {
+                throw new ProductNotFoundException(orderLine.getProductId());
             }
         }
         return result;
     }
 
-    public CartLineDto getCartById (String productId){
+    public CartLineDto getCartLineById(String productId){
         CartLineDto result = null;
 
         OrderLine orderLine = orderLineRepository.findByProductId(productId);
@@ -53,18 +56,21 @@ public class CartLineService {
     }
 
     public void addToCart(String productId){
-        OrderLine line;
+        OrderLine orderLine;
 
-        line = orderLineRepository.findByProductId(productId);
-
-        if(line != null){
-            int qty = line.getQty()+1;
-            line.setQty(qty);
-            orderLineRepository.save(line);
+        if(productRepository.existsById(productId)){
+            if(orderLineRepository.existsByProductId(productId)){
+                orderLine = orderLineRepository.findByProductId(productId);
+                orderLine.setQty(orderLine.getQty()+1);
+                orderLineRepository.save(orderLine);
+            }
+            else{
+                orderLine = new OrderLine(productId, 1);
+                orderLineRepository.save(orderLine);
+            }
         }
-        else{
-            line = new OrderLine(productId, 1);
-            orderLineRepository.save(line);
+        else {
+            throw new ProductNotFoundException(productId);
         }
     }
 
