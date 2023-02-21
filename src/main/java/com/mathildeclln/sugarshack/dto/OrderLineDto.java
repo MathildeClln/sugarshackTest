@@ -4,6 +4,14 @@ public class OrderLineDto {
     private String productId;
     private int qty;
 
+    public OrderLineDto() {
+    }
+
+    public OrderLineDto(String productId, int qty) {
+        this.productId = productId;
+        this.qty = qty;
+    }
+
     public String getProductId() {
         return productId;
     }

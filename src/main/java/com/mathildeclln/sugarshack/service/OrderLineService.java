@@ -11,7 +11,11 @@ import java.util.ArrayList;
 @Service
 public class OrderLineService {
     @Autowired
-    private StockRepository stockRepo;
+    private StockRepository stockRepository;
+
+    public OrderLineService(StockRepository stockRepository) {
+        this.stockRepository = stockRepository;
+    }
 
     public OrderValidationResponseDto placeOrder(ArrayList<OrderLineDto> orderLines){
         OrderValidationResponseDto result = new OrderValidationResponseDto();
@@ -20,7 +24,7 @@ public class OrderLineService {
 
         for(OrderLineDto line: orderLines){
             int maxQty;
-            maxQty = stockRepo.findByProductId(line.getProductId())
+            maxQty = stockRepository.findByProductId(line.getProductId())
                                 .getStock();
             if(line.getQty() > maxQty){
                 valid = false;

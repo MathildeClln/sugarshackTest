@@ -12,6 +12,11 @@ public class Stock {
     public Stock(){
     }
 
+    public Stock(String productId, int stock) {
+        this.productId = productId;
+        this.stock = stock;
+    }
+
     public String getProductId() {
         return productId;
     }
