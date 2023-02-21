@@ -7,6 +7,14 @@ public class OrderValidationResponseDto {
     private boolean isOrderValid;
     private ArrayList<String> errors;
 
+    public OrderValidationResponseDto() {
+    }
+
+    public OrderValidationResponseDto(boolean isOrderValid, ArrayList<String> errors) {
+        this.isOrderValid = isOrderValid;
+        this.errors = errors;
+    }
+
     public boolean isOrderValid() {
         return isOrderValid;
     }

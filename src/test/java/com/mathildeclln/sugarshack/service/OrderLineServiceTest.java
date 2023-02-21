@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,12 +19,12 @@ public class OrderLineServiceTest {
     @Mock
     private StockRepository stockRepository;
 
+    @InjectMocks
+    private OrderLineService orderLineService;
+
     private ArrayList<OrderLineDto> orderLines;
     private Stock stock;
     private OrderLineDto orderLine1;
-
-    @InjectMocks
-    private OrderLineService orderLineService;
 
     @BeforeEach
     public void initialSteps(){

@@ -18,7 +18,7 @@ public class OrderLineService {
     }
 
     public OrderValidationResponseDto placeOrder(ArrayList<OrderLineDto> orderLines){
-        OrderValidationResponseDto result = new OrderValidationResponseDto();
+        OrderValidationResponseDto result;
         boolean valid = true;
         ArrayList<String> errors = new ArrayList<>();
 
@@ -33,8 +33,7 @@ public class OrderLineService {
                         line.getProductId(), line.getQty(), maxQty));
             }
         }
-        result.setOrderValid(valid);
-        result.setErrors(errors);
+        result = new OrderValidationResponseDto(valid, errors);
 
         return result;
     }

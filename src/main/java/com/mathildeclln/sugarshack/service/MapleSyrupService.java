@@ -17,25 +17,21 @@ public class MapleSyrupService {
     @Autowired
     private StockRepository stockRepository;
 
+    public MapleSyrupService(ProductRepository productRepository, StockRepository stockRepository) {
+        this.productRepository = productRepository;
+        this.stockRepository = stockRepository;
+    }
+
     public MapleSyrupDto getInfo(String productId){
-        MapleSyrupDto result = new MapleSyrupDto();
-        Product product;
-        product = productRepository.findById(productId).orElse(null);
+        MapleSyrupDto result = null;
+        Product product = productRepository.findById(productId).orElse(null);
 
         if(product != null){
             Stock stock = stockRepository.findByProductId(productId);
             if(stock != null){
-                result.setId(product.getId());
-                result.setName(product.getName());
-                result.setImage(product.getImage());
-                result.setType(product.getType());
-                result.setPrice(product.getPrice());
-                result.setDescription(product.getDescription());
-                result.setStock(stock.getStock());
-
-                return result;
+                result = new MapleSyrupDto(product, stock);
             }
         }
-        return null;
+        return result;
     }
 }
