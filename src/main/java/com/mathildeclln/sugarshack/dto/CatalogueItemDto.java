@@ -1,6 +1,8 @@
 package com.mathildeclln.sugarshack.dto;
 
 import com.mathildeclln.sugarshack.model.MapleType;
+import com.mathildeclln.sugarshack.model.Product;
+import com.mathildeclln.sugarshack.model.Stock;
 
 public class CatalogueItemDto {
     private String id;
@@ -9,6 +11,18 @@ public class CatalogueItemDto {
     private double price;
     private int maxQty;
     private MapleType type;
+
+    public CatalogueItemDto() {
+    }
+
+    public CatalogueItemDto(Product product, Stock stock){
+        this.id = product.getId();
+        this.name = product.getName();
+        this.image = product.getImage();
+        this.price = product.getPrice();
+        this.type = product.getType();
+        this.maxQty = stock.getStock();
+    }
 
     public String getId() {
         return id;

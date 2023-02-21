@@ -32,12 +32,7 @@ public class CartLineService {
             Product p = productRepository.findById(line.getProductId()).orElse(null);
 
             if(p != null){
-                CartLineDto c = new CartLineDto();
-                c.setProductId(line.getProductId());
-                c.setName(p.getName());
-                c.setImage(p.getImage());
-                c.setPrice(p.getPrice());
-                c.setQty(line.getQty());
+                CartLineDto c = new CartLineDto(p, line);
 
                 result.add(c);
             }
@@ -68,9 +63,7 @@ public class CartLineService {
             orderLineRepository.save(line);
         }
         else{
-            line = new OrderLine();
-            line.setQty(1);
-            line.setProductId(productId);
+            line = new OrderLine(productId, 1);
             orderLineRepository.save(line);
         }
     }

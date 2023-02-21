@@ -18,21 +18,24 @@ public class CatalogueItemService {
     @Autowired
     private StockRepository stockRepository;
 
+    public CatalogueItemService() {
+    }
+
+    public CatalogueItemService(ProductRepository productRepository, StockRepository stockRepository) {
+        this.productRepository = productRepository;
+        this.stockRepository = stockRepository;
+    }
+
     public ArrayList<CatalogueItemDto> getCatalogue(MapleType type){
         ArrayList<CatalogueItemDto> result = new ArrayList<>();
-        ArrayList<Product> prod = productRepository.findAllByType(type);
+        ArrayList<Product> products = productRepository.findAllByType(type);
 
-        for(Product p: prod){
-            Stock stock = stockRepository.findByProductId(p.getId());
+        for(Product product: products){
+            Stock stock = stockRepository.findByProductId(product.getId());
             if(stock != null){
-                CatalogueItemDto cat = new CatalogueItemDto();
-                cat.setId(p.getId());
-                cat.setName(p.getName());
-                cat.setImage(p.getImage());
-                cat.setType(p.getType());
-                cat.setPrice(p.getPrice());
-                cat.setMaxQty(stock.getStock());
-                result.add(cat);
+                CatalogueItemDto catalogueItem = new CatalogueItemDto(product, stock);
+
+                result.add(catalogueItem);
             }
         }
         return result;
