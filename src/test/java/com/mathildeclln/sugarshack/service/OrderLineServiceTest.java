@@ -8,9 +8,11 @@ import com.mathildeclln.sugarshack.model.Stock;
 import com.mathildeclln.sugarshack.repository.StockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 
@@ -18,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(MockitoExtension.class)
 public class OrderLineServiceTest {
     @Mock
     private StockRepository stockRepository;
@@ -43,7 +46,7 @@ public class OrderLineServiceTest {
 
     @Test
     public void placeOrderValidTest(){
-        given(stockRepository.findByProductId("1")).willReturn(stock);
+        given(stockRepository.findByProductId(orderLine1.getProductId())).willReturn(stock);
 
         orderValidationResponse = orderLineService.placeOrder(orderLines);
 
@@ -58,8 +61,8 @@ public class OrderLineServiceTest {
         Stock           stockInvalid = new Stock("2", 5);
 
         orderLines.add(orderLineInvalid);
-        given(stockRepository.findByProductId("1")).willReturn(stock);
-        given(stockRepository.findByProductId("2")).willReturn(stockInvalid);
+        given(stockRepository.findByProductId(stock.getProductId())).willReturn(stock);
+        given(stockRepository.findByProductId(stockInvalid.getProductId())).willReturn(stockInvalid);
 
         orderValidationResponse = orderLineService.placeOrder(orderLines);
 
@@ -67,7 +70,7 @@ public class OrderLineServiceTest {
         assertThat(orderValidationResponse.isOrderValid()).isFalse();
         assertThat(orderValidationResponse.getErrors().size()).isEqualTo(1);
 
-        orderLine1.setQty(11);
+        orderLine1.setQty(stock.getStock()+1);
         orderValidationResponse = orderLineService.placeOrder(orderLines);
 
         assertThat(orderValidationResponse).isNotNull();
@@ -80,7 +83,8 @@ public class OrderLineServiceTest {
         OrderLineDto    orderLineException = new OrderLineDto("3", 2);
 
         orderLines.add(orderLineException);
-        given(stockRepository.findByProductId("3")).willReturn(null);
+        given(stockRepository.findByProductId(stock.getProductId())).willReturn(stock);
+        given(stockRepository.findByProductId(orderLineException.getProductId())).willReturn(null);
 
         assertThrows(ProductNotFoundException.class,
                 () -> orderValidationResponse = orderLineService.placeOrder(orderLines));
@@ -94,8 +98,8 @@ public class OrderLineServiceTest {
         Stock           stock2 = new Stock("2", 10);
 
         orderLines.add(orderLineException);
-        given(stockRepository.findByProductId("1")).willReturn(stock);
-        given(stockRepository.findByProductId("2")).willReturn(stock2);
+        given(stockRepository.findByProductId(stock.getProductId())).willReturn(stock);
+        given(stockRepository.findByProductId(stock2.getProductId())).willReturn(stock2);
 
         assertThrows(InvalidQuantityException.class,
                 () -> orderValidationResponse = orderLineService.placeOrder(orderLines));

@@ -9,9 +9,11 @@ import com.mathildeclln.sugarshack.repository.ProductRepository;
 import com.mathildeclln.sugarshack.repository.StockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 
@@ -19,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(MockitoExtension.class)
 public class CatalogueItemServiceTest {
     @Mock
     private ProductRepository productRepository;
@@ -56,17 +59,27 @@ public class CatalogueItemServiceTest {
     @Test
     public void getCatalogueHappyPathTest(){
         given(productRepository.findAllByType(MapleType.AMBER)).willReturn(products);
-        given(stockRepository.findByProductId("1")).willReturn(stocks.get(0));
-        given(stockRepository.findByProductId("2")).willReturn(stocks.get(1));
+        given(stockRepository.findByProductId(stocks.get(0).getProductId())).willReturn(stocks.get(0));
+        given(stockRepository.findByProductId(stocks.get(1).getProductId())).willReturn(stocks.get(1));
 
         catalogueItems = catalogueItemService.getCatalogue(MapleType.AMBER);
 
         assertThat(catalogueItems).isNotNull();
         assertThat(catalogueItems.size()).isEqualTo(2);
-        assertThat(catalogueItems.get(0).getId()).isEqualTo("1");
-        assertThat(catalogueItems.get(0).getPrice()).isEqualTo(12.99);
-        assertThat(catalogueItems.get(1).getId()).isEqualTo("2");
-        assertThat(catalogueItems.get(1).getPrice()).isEqualTo(14.5);
+
+        assertThat(catalogueItems.get(0).getId()).isEqualTo(products.get(0).getId());
+        assertThat(catalogueItems.get(0).getPrice()).isEqualTo(products.get(0).getPrice());
+        assertThat(catalogueItems.get(0).getMaxQty()).isEqualTo(stocks.get(0).getStock());
+        assertThat(catalogueItems.get(0).getName()).isEqualTo(products.get(0).getName());
+        assertThat(catalogueItems.get(0).getImage()).isEqualTo(products.get(0).getImage());
+        assertThat(catalogueItems.get(0).getType()).isEqualTo(products.get(0).getType());
+
+        assertThat(catalogueItems.get(1).getId()).isEqualTo(products.get(1).getId());
+        assertThat(catalogueItems.get(1).getPrice()).isEqualTo(products.get(1).getPrice());
+        assertThat(catalogueItems.get(1).getMaxQty()).isEqualTo(stocks.get(1).getStock());
+        assertThat(catalogueItems.get(1).getName()).isEqualTo(products.get(1).getName());
+        assertThat(catalogueItems.get(1).getImage()).isEqualTo(products.get(1).getImage());
+        assertThat(catalogueItems.get(1).getType()).isEqualTo(products.get(1).getType());
     }
 
     @Test
@@ -87,10 +100,10 @@ public class CatalogueItemServiceTest {
         exceptionProductList.add(new Product("3", "Maple3", "...",
                                             "image3.jpg", 10.7, MapleType.CLEAR));
 
-        given(productRepository.findAllByType(MapleType.CLEAR)).willReturn(exceptionProductList);
-        given(stockRepository.findByProductId("3")).willReturn(null);
+        given(productRepository.findAllByType(exceptionProductList.get(0).getType())).willReturn(exceptionProductList);
+        given(stockRepository.findByProductId(exceptionProductList.get(0).getId())).willReturn(null);
 
         assertThrows(ProductNotFoundException.class,
-                () -> catalogueItemService.getCatalogue(MapleType.CLEAR));
+                () -> catalogueItemService.getCatalogue(exceptionProductList.get(0).getType()));
     }
 }

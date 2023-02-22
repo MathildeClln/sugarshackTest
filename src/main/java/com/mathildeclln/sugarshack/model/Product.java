@@ -18,6 +18,29 @@ public class Product {
     public Product() {
     }
 
+    @Override
+    public boolean equals(Object object){
+        if(this == object){
+            return true;
+        }
+
+        if(object == null){
+            return false;
+        }
+
+        if(getClass() != object.getClass()){
+            return false;
+        }
+        Product product = (Product) object;
+
+        return (this.id.equals(product.getId()) &&
+                this.name.equals(product.getName()) &&
+                this.description.equals(product.getDescription()) &&
+                this.image.equals(product.getImage()) &&
+                this.price == product.getPrice() &&
+                this.type == product.getType());
+    }
+
     public String getId() {
         return id;
     }

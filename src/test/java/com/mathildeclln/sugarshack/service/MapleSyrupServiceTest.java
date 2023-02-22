@@ -9,9 +9,11 @@ import com.mathildeclln.sugarshack.repository.ProductRepository;
 import com.mathildeclln.sugarshack.repository.StockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
@@ -19,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
+@ExtendWith(MockitoExtension.class)
 public class MapleSyrupServiceTest {
 
     @Mock
@@ -48,19 +51,19 @@ public class MapleSyrupServiceTest {
     public void getInfoHappyPathTest(){
         MapleSyrupDto mapleSyrup;
 
-        given(productRepository.findById("1")).willReturn(Optional.ofNullable(product));
-        given(stockRepository.findByProductId("1")).willReturn(stock);
+        given(productRepository.findById(product.getId())).willReturn(Optional.ofNullable(product));
+        given(stockRepository.findByProductId(stock.getProductId())).willReturn(stock);
 
-        mapleSyrup = mapleSyrupService.getInfo("1");
+        mapleSyrup = mapleSyrupService.getInfo(product.getId());
 
         assertThat(mapleSyrup).isNotNull();
-        assertThat(mapleSyrup.getId()).isEqualTo("1");
-        assertThat(mapleSyrup.getName()).isEqualTo("Maple1");
-        assertThat(mapleSyrup.getDescription()).isEqualTo("...");
-        assertThat(mapleSyrup.getImage()).isEqualTo("image1.jpg");
-        assertThat(mapleSyrup.getPrice()).isEqualTo(10.5);
-        assertThat(mapleSyrup.getType()).isEqualTo(MapleType.AMBER);
-        assertThat(mapleSyrup.getStock()).isEqualTo(20);
+        assertThat(mapleSyrup.getId()).isEqualTo(product.getId());
+        assertThat(mapleSyrup.getName()).isEqualTo(product.getName());
+        assertThat(mapleSyrup.getDescription()).isEqualTo(product.getDescription());
+        assertThat(mapleSyrup.getImage()).isEqualTo(product.getImage());
+        assertThat(mapleSyrup.getPrice()).isEqualTo(product.getPrice());
+        assertThat(mapleSyrup.getType()).isEqualTo(product.getType());
+        assertThat(mapleSyrup.getStock()).isEqualTo(stock.getStock());
     }
 
     @Test
