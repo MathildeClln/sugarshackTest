@@ -2,6 +2,7 @@ package com.mathildeclln.sugarshack.service;
 
 
 import com.mathildeclln.sugarshack.dto.CartLineDto;
+import com.mathildeclln.sugarshack.exception.InvalidQuantityException;
 import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
 import com.mathildeclln.sugarshack.model.MapleType;
 import com.mathildeclln.sugarshack.model.OrderLine;
@@ -20,7 +21,6 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.willDoNothing;
 
 public class CartLineServiceTest{
 
@@ -103,7 +103,6 @@ public class CartLineServiceTest{
 
         given(productRepository.existsById("3")).willReturn(true);
         given(orderLineRepository.existsByProductId("3")).willReturn(false);
-        given(orderLineRepository.save(orderLine2)).willReturn(orderLine2);
 
         cartLineService.addToCart("3");
 
@@ -119,14 +118,9 @@ public class CartLineServiceTest{
         assertThat(cartLine.getImage()).isEqualTo("3.png");
 
         // 2. Test to add product already in cart
-        given(productRepository.existsById("3")).willReturn(true);
         given(orderLineRepository.existsByProductId("3")).willReturn(true);
-        given(orderLineRepository.save(orderLine2)).willReturn(orderLine2);
 
         cartLineService.addToCart("3");
-
-        given(orderLineRepository.findByProductId("3")).willReturn(orderLine2);
-        given(productRepository.findById("3")).willReturn(Optional.of(product2));
 
         cartLine = cartLineService.getCartLineById("3");
 
@@ -146,33 +140,69 @@ public class CartLineServiceTest{
     }
 
     @Test
-    public void removeFromCartTest(){
+    public void removeFromCartHappyPathTest(){
         given(orderLineRepository.existsByProductId("1")).willReturn(true);
-        willDoNothing().given(orderLineRepository).deleteByProductId("1");
 
         cartLineService.removeFromCart("1");
 
         given(orderLineRepository.findByProductId("1")).willReturn(null);
-        given(productRepository.findById("1")).willReturn(Optional.ofNullable(product));
-
         CartLineDto cartLine = cartLineService.getCartLineById("1");
 
         assertThat(cartLine).isNull();
     }
 
     @Test
-    public void changeQtyTest(){
+    public void removeFromCartExceptionTest(){
+        given(orderLineRepository.existsByProductId("1")).willReturn(false);
 
-        given(orderLineRepository.findByProductId("1")).willReturn(orderLine);
-        given(orderLineRepository.save(orderLine)).willReturn(orderLine);
+        assertThrows(ProductNotFoundException.class,
+                () -> cartLineService.removeFromCart("1"));
+    }
 
-        cartLineService.changeQty("1", 4);
+    @Test
+    public void changeQtyHappyPathTest(){
+        CartLineDto cartLine;
 
         given(orderLineRepository.findByProductId("1")).willReturn(orderLine);
         given(productRepository.findById("1")).willReturn(Optional.ofNullable(product));
 
+        cartLineService.changeQty("1", 4);
+        cartLine = cartLineService.getCartLineById("1");
+
+        assertThat(cartLine).isNotNull();
+        assertThat(cartLine.getProductId()).isEqualTo("1");
+        assertThat(cartLine.getQty()).isEqualTo(4);
+
+        cartLineService.changeQty("1", 3);
+        cartLine = cartLineService.getCartLineById("1");
+
+        assertThat(cartLine).isNotNull();
+        assertThat(cartLine.getProductId()).isEqualTo("1");
+        assertThat(cartLine.getQty()).isEqualTo(3);
+    }
+
+    @Test
+    public void changeQtyToZeroTest(){
+        given(orderLineRepository.findByProductId("1")).willReturn(orderLine);
+        cartLineService.changeQty("1", 0);
+
+        given(orderLineRepository.findByProductId("1")).willReturn(null);
         CartLineDto cartLine = cartLineService.getCartLineById("1");
 
-        assertThat(cartLine.getQty()).isEqualTo(4);
+        assertThat(cartLine).isNull();
+    }
+
+    @Test
+    public void changeQtyInvalidQtyExceptionTest(){
+        given(orderLineRepository.findByProductId("1")).willReturn(orderLine);
+        assertThrows(InvalidQuantityException.class,
+                () -> cartLineService.changeQty("1", -1));
+    }
+
+    @Test
+    public void changeQtyProductNotFoundExceptionTest(){
+        given(orderLineRepository.findByProductId("1")).willReturn(null);
+        assertThrows(ProductNotFoundException.class,
+                () -> cartLineService.changeQty("1", 5));
     }
 }

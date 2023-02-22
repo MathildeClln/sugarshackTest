@@ -69,9 +69,6 @@ public class OrderLineServiceTest {
 
         orderLine1.setQty(11);
 
-        given(stockRepository.findByProductId("1")).willReturn(stock);
-        given(stockRepository.findByProductId("2")).willReturn(stockInvalid);
-
         orderValidationResponse = orderLineService.placeOrder(orderLines);
 
         assertThat(orderValidationResponse).isNotNull();

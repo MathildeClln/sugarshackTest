@@ -1,6 +1,7 @@
 package com.mathildeclln.sugarshack.service;
 
 import com.mathildeclln.sugarshack.dto.CartLineDto;
+import com.mathildeclln.sugarshack.exception.InvalidQuantityException;
 import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
 import com.mathildeclln.sugarshack.model.OrderLine;
 import com.mathildeclln.sugarshack.model.Product;
@@ -79,13 +80,27 @@ public class CartLineService {
         if(orderLineRepository.existsByProductId(productId)){
             orderLineRepository.deleteByProductId(productId);
         }
+        else{
+            throw new ProductNotFoundException(productId);
+        }
     }
 
     public void changeQty(String productId, int newQty){
         OrderLine line = orderLineRepository.findByProductId(productId);
+
         if(line != null){
-            line.setQty(newQty);
-            orderLineRepository.save(line);
+            if(newQty > 0){
+                line.setQty(newQty);
+                orderLineRepository.save(line);
+            } else if (newQty == 0) {
+                orderLineRepository.deleteByProductId(productId);
+            }
+            else {
+                throw new InvalidQuantityException(newQty);
+            }
+        }
+        else{
+            throw new ProductNotFoundException(productId);
         }
     }
 }
