@@ -23,6 +23,7 @@ public class MapleSyrupDto {
         this.image = product.getImage();
         this.price = product.getPrice();
         this.stock = stock.getStock();
+        this.type = product.getType();
     }
 
     public String getId() {

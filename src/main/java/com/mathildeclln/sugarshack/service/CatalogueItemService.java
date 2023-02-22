@@ -1,5 +1,6 @@
 package com.mathildeclln.sugarshack.service;
 
+import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
 import com.mathildeclln.sugarshack.model.MapleType;
 import com.mathildeclln.sugarshack.dto.CatalogueItemDto;
 import com.mathildeclln.sugarshack.model.Product;
@@ -28,7 +29,7 @@ public class CatalogueItemService {
 
     public ArrayList<CatalogueItemDto> getCatalogue(MapleType type){
         ArrayList<CatalogueItemDto> result = new ArrayList<>();
-        ArrayList<Product> products = productRepository.findAllByType(type);
+        ArrayList<Product>          products = productRepository.findAllByType(type);
 
         for(Product product: products){
             Stock stock = stockRepository.findByProductId(product.getId());
@@ -36,6 +37,9 @@ public class CatalogueItemService {
                 CatalogueItemDto catalogueItem = new CatalogueItemDto(product, stock);
 
                 result.add(catalogueItem);
+            }
+            else{
+                throw new ProductNotFoundException(product.getId());
             }
         }
         return result;

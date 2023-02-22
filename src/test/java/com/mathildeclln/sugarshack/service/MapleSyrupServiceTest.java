@@ -1,6 +1,7 @@
 package com.mathildeclln.sugarshack.service;
 
 import com.mathildeclln.sugarshack.dto.MapleSyrupDto;
+import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
 import com.mathildeclln.sugarshack.model.MapleType;
 import com.mathildeclln.sugarshack.model.Product;
 import com.mathildeclln.sugarshack.model.Stock;
@@ -15,6 +16,7 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 public class MapleSyrupServiceTest {
@@ -33,17 +35,17 @@ public class MapleSyrupServiceTest {
 
     @BeforeEach
     public void initialSteps(){
-        productRepository = Mockito.mock(ProductRepository.class);
-        stockRepository = Mockito.mock(StockRepository.class);
-        mapleSyrupService = new MapleSyrupService(productRepository, stockRepository);
+        productRepository   = Mockito.mock(ProductRepository.class);
+        stockRepository     = Mockito.mock(StockRepository.class);
+        mapleSyrupService   = new MapleSyrupService(productRepository, stockRepository);
 
-        product = new Product("1", "Maple1", "...",
-                            "image1.jpg", 10.5, MapleType.AMBER);
-        stock = new Stock("1", 20);
+        product             = new Product("1", "Maple1", "...",
+                                    "image1.jpg", 10.5, MapleType.AMBER);
+        stock               = new Stock("1", 20);
     }
 
     @Test
-    public void getInfoTest(){
+    public void getInfoHappyPathTest(){
         MapleSyrupDto mapleSyrup;
 
         given(productRepository.findById("1")).willReturn(Optional.ofNullable(product));
@@ -59,5 +61,13 @@ public class MapleSyrupServiceTest {
         assertThat(mapleSyrup.getPrice()).isEqualTo(10.5);
         assertThat(mapleSyrup.getType()).isEqualTo(MapleType.AMBER);
         assertThat(mapleSyrup.getStock()).isEqualTo(20);
+    }
+
+    @Test
+    public void getInfoExceptionTest(){
+        given(productRepository.findById("4")).willReturn(Optional.empty());
+
+        assertThrows(ProductNotFoundException.class,
+                () -> mapleSyrupService.getInfo("4"));
     }
 }

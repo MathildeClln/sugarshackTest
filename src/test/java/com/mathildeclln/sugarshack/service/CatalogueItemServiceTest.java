@@ -1,6 +1,7 @@
 package com.mathildeclln.sugarshack.service;
 
 import com.mathildeclln.sugarshack.dto.CatalogueItemDto;
+import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
 import com.mathildeclln.sugarshack.model.MapleType;
 import com.mathildeclln.sugarshack.model.Product;
 import com.mathildeclln.sugarshack.model.Stock;
@@ -14,6 +15,7 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,6 +27,7 @@ public class CatalogueItemServiceTest {
 
     private ArrayList<Product> products;
     private ArrayList<Stock> stocks;
+    private ArrayList<CatalogueItemDto> catalogueItems;
 
     @InjectMocks
     private CatalogueItemService catalogueItemService;
@@ -51,9 +54,7 @@ public class CatalogueItemServiceTest {
     }
 
     @Test
-    public void getInfoTest(){
-        ArrayList<CatalogueItemDto> catalogueItems;
-
+    public void getCatalogueHappyPathTest(){
         given(productRepository.findAllByType(MapleType.AMBER)).willReturn(products);
         given(stockRepository.findByProductId("1")).willReturn(stocks.get(0));
         given(stockRepository.findByProductId("2")).willReturn(stocks.get(1));
@@ -66,5 +67,30 @@ public class CatalogueItemServiceTest {
         assertThat(catalogueItems.get(0).getPrice()).isEqualTo(12.99);
         assertThat(catalogueItems.get(1).getId()).isEqualTo("2");
         assertThat(catalogueItems.get(1).getPrice()).isEqualTo(14.5);
+    }
+
+    @Test
+    public void getCatalogueEmptyTest(){
+        ArrayList<Product>          emptyProductList = new ArrayList<>();
+
+        given(productRepository.findAllByType(MapleType.DARK)).willReturn(emptyProductList);
+
+        catalogueItems = catalogueItemService.getCatalogue(MapleType.DARK);
+
+        assertThat(catalogueItems).isNotNull();
+        assertThat(catalogueItems.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void getCatalogueExceptionTest(){
+        ArrayList<Product> exceptionProductList = new ArrayList<>();
+        exceptionProductList.add(new Product("3", "Maple3", "...",
+                                            "image3.jpg", 10.7, MapleType.CLEAR));
+
+        given(productRepository.findAllByType(MapleType.CLEAR)).willReturn(exceptionProductList);
+        given(stockRepository.findByProductId("3")).willReturn(null);
+
+        assertThrows(ProductNotFoundException.class,
+                () -> catalogueItemService.getCatalogue(MapleType.CLEAR));
     }
 }

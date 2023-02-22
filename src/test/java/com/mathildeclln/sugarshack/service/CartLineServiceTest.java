@@ -33,6 +33,7 @@ public class CartLineServiceTest{
 
     private OrderLine orderLine;
     private Product product;
+    private CartLineDto cartLine;
 
     @BeforeEach
     public void initialSteps(){
@@ -49,8 +50,9 @@ public class CartLineServiceTest{
 
     @Test
     public void getCartHappyPathTest() {
-        OrderLine orderLine1 = new OrderLine("2", 1);
-        Product product1 = new Product("2", "", "", "", 10, MapleType.CLEAR);
+        OrderLine   orderLine1 = new OrderLine("2", 1);
+        Product     product1 = new Product("2", "", "", "", 10, MapleType.CLEAR);
+        CartLineDto cartLine1;
 
         given(orderLineRepository.findAll()).willReturn(List.of(orderLine, orderLine1));
         given(productRepository.findById("1")).willReturn(Optional.ofNullable(product));
@@ -61,7 +63,7 @@ public class CartLineServiceTest{
         assertThat(cartLines).isNotNull();
         assertThat(cartLines.size()).isEqualTo(2);
 
-        CartLineDto cartLine1 = cartLines.get(0);
+        cartLine1 = cartLines.get(0);
         assertThat(cartLine1.getQty()).isEqualTo(3);
         assertThat(cartLine1.getName()).isEqualTo("Maple1");
         assertThat(cartLine1.getImage()).isEqualTo("m1.jpg");
@@ -85,8 +87,8 @@ public class CartLineServiceTest{
     public void getCartExceptionTest(){
         OrderLine orderLine1 = new OrderLine("2", 1);
 
-        given(orderLineRepository.findAll()).willReturn(List.of(orderLine, orderLine1));
-        given(productRepository.findById("1")).willReturn(Optional.ofNullable(product));
+        given(orderLineRepository.findAll()).willReturn(List.of(orderLine1));
+        given(productRepository.findById("1")).willReturn(Optional.empty());
 
         assertThrows(ProductNotFoundException.class,
                 () -> cartLineService.getCart());
@@ -99,7 +101,6 @@ public class CartLineServiceTest{
         Product product2 = new Product("3", "Maple3",
                                     "", "3.png",
                                         15, MapleType.DARK);
-        CartLineDto cartLine;
 
         given(productRepository.existsById("3")).willReturn(true);
         given(orderLineRepository.existsByProductId("3")).willReturn(false);
@@ -146,7 +147,8 @@ public class CartLineServiceTest{
         cartLineService.removeFromCart("1");
 
         given(orderLineRepository.findByProductId("1")).willReturn(null);
-        CartLineDto cartLine = cartLineService.getCartLineById("1");
+        assertThrows(ProductNotFoundException.class,
+                () -> cartLine = cartLineService.getCartLineById("1"));
 
         assertThat(cartLine).isNull();
     }
@@ -161,8 +163,6 @@ public class CartLineServiceTest{
 
     @Test
     public void changeQtyHappyPathTest(){
-        CartLineDto cartLine;
-
         given(orderLineRepository.findByProductId("1")).willReturn(orderLine);
         given(productRepository.findById("1")).willReturn(Optional.ofNullable(product));
 
@@ -187,7 +187,8 @@ public class CartLineServiceTest{
         cartLineService.changeQty("1", 0);
 
         given(orderLineRepository.findByProductId("1")).willReturn(null);
-        CartLineDto cartLine = cartLineService.getCartLineById("1");
+        assertThrows(ProductNotFoundException.class,
+                () -> cartLine = cartLineService.getCartLineById("1"));
 
         assertThat(cartLine).isNull();
     }

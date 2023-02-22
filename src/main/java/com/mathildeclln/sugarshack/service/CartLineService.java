@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CartLineService {
@@ -27,31 +28,34 @@ public class CartLineService {
     }
 
     public ArrayList<CartLineDto> getCart() throws ProductNotFoundException {
-        ArrayList<CartLineDto> result = new ArrayList<>();
-        List<OrderLine> orderLines = orderLineRepository.findAll();
+        ArrayList<CartLineDto>  result = new ArrayList<>();
+        List<OrderLine>         orderLines = orderLineRepository.findAll();
 
         for (OrderLine orderLine : orderLines) {
-            Product product = productRepository.findById(orderLine.getProductId()).orElse(null);
+            Optional<Product> optionalProduct = productRepository.findById(orderLine.getProductId());
 
-            if (product != null) {
-                CartLineDto c = new CartLineDto(product, orderLine);
+            if (optionalProduct.isEmpty()) {
+                throw new ProductNotFoundException(orderLine.getProductId());
+            }
+            else {
+                CartLineDto c = new CartLineDto(optionalProduct.get(), orderLine);
 
                 result.add(c);
-            } else {
-                throw new ProductNotFoundException(orderLine.getProductId());
             }
         }
         return result;
     }
 
     public CartLineDto getCartLineById(String productId){
-        CartLineDto result = null;
+        CartLineDto result;
+        OrderLine           orderLine = orderLineRepository.findByProductId(productId);
+        Optional<Product>   product = productRepository.findById(productId);
 
-        OrderLine orderLine = orderLineRepository.findByProductId(productId);
-        Product product = productRepository.findById(productId).orElse(null);
-
-        if(product != null & orderLine != null){
-            result = new CartLineDto(product, orderLine);
+        if(product.isEmpty() || orderLine == null) {
+            throw new ProductNotFoundException(productId);
+        }
+        else {
+            result = new CartLineDto(product.get(), orderLine);
         }
         return result;
     }
