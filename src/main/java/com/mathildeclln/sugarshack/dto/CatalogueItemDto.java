@@ -12,9 +12,6 @@ public class CatalogueItemDto {
     private int maxQty;
     private MapleType type;
 
-    public CatalogueItemDto() {
-    }
-
     public CatalogueItemDto(Product product, Stock stock){
         this.id = product.getId();
         this.name = product.getName();
@@ -22,6 +19,15 @@ public class CatalogueItemDto {
         this.price = product.getPrice();
         this.type = product.getType();
         this.maxQty = stock.getStock();
+    }
+
+    public CatalogueItemDto(String id, String name, String image, double price, int maxQty, MapleType type) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.price = price;
+        this.maxQty = maxQty;
+        this.type = type;
     }
 
     public String getId() {

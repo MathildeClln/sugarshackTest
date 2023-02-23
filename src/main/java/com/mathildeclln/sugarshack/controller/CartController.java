@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/cart")
-public class CartLineController {
+public class CartController {
     @Autowired
     private CartLineService cartService;
 

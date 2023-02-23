@@ -13,9 +13,13 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/order")
-public class OrderLineController {
+public class OrderController {
     @Autowired
     private OrderLineService orderLineService;
+
+    public OrderController(OrderLineService orderLineService) {
+        this.orderLineService = orderLineService;
+    }
 
     @PostMapping
     public OrderValidationResponseDto placeOrder(@RequestBody ArrayList<OrderLineDto> lines){

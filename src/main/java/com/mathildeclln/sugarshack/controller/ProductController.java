@@ -23,11 +23,13 @@ public class ProductController {
 
     @GetMapping
     public ArrayList<CatalogueItemDto> getCatalogue(MapleType type) {
+
         return catalogueItemService.getCatalogue(type);
     }
 
     @GetMapping("/{productId}")
     public MapleSyrupDto getProductInfo(@PathVariable String productId){
+
         return mapleSyrupService.getInfo(productId);
     }
 }

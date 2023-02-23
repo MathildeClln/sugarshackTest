@@ -13,9 +13,6 @@ public class MapleSyrupDto {
     private int stock;
     private MapleType type;
 
-    public MapleSyrupDto() {
-    }
-
     public MapleSyrupDto(Product product, Stock stock){
         this.id = product.getId();
         this.name = product.getName();
@@ -24,6 +21,16 @@ public class MapleSyrupDto {
         this.price = product.getPrice();
         this.stock = stock.getStock();
         this.type = product.getType();
+    }
+
+    public MapleSyrupDto(String id, String name, String description, String image, double price, int stock, MapleType type) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.image = image;
+        this.price = price;
+        this.stock = stock;
+        this.type = type;
     }
 
     public String getId() {
