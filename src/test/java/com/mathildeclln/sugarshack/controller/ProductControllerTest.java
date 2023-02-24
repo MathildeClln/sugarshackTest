@@ -2,6 +2,7 @@ package com.mathildeclln.sugarshack.controller;
 
 import com.mathildeclln.sugarshack.dto.CatalogueItemDto;
 import com.mathildeclln.sugarshack.dto.MapleSyrupDto;
+import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
 import com.mathildeclln.sugarshack.model.MapleType;
 import com.mathildeclln.sugarshack.service.CatalogueItemService;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,15 @@ public class ProductControllerTest {
     }
 
     @Test
+    public void getProductInfoNotFoundExceptionTest() throws Exception{
+        given(mapleSyrupService.getInfo("4")).willThrow(ProductNotFoundException.class);
+
+        ResultActions result = mockMvc.perform(get("/products/{productId}", "4"));
+
+        result.andExpect(status().isNotFound()).andDo(print());
+    }
+
+    @Test
     public void getCatalogue() throws Exception {
         CatalogueItemDto itemClear = new CatalogueItemDto("2", "Maple2", "img2",
                                                         15, 10, MapleType.CLEAR);
@@ -82,6 +92,16 @@ public class ProductControllerTest {
         result.andExpect(jsonPath("$[1].price").value(itemClear2.getPrice()));
         result.andExpect(jsonPath("$[1].maxQty").value(itemClear2.getMaxQty()));
         result.andExpect(jsonPath("$[1].type").value(itemClear2.getType().name()));
+    }
+
+    @Test
+    public void getCatalogueNotFoundExceptionTest() throws Exception{
+        given(catalogueItemService.getCatalogue(MapleType.DARK)).willThrow(ProductNotFoundException.class);
+
+        ResultActions result = mockMvc.perform(get("/products")
+                .param("type", MapleType.DARK.name()));
+
+        result.andExpect(status().isNotFound()).andDo(print());
     }
 
 }

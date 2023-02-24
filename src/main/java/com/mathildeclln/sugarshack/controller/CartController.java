@@ -20,6 +20,7 @@ public class CartController {
 
     @PutMapping
     public void addToCart(String productId){
+
         cartService.addToCart(productId);
     }
 

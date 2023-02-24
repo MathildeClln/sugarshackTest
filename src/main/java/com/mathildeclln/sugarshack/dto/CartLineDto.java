@@ -23,6 +23,14 @@ public class CartLineDto {
         this.qty = orderLine.getQty();
     }
 
+    public CartLineDto(String productId, String name, String image, Double price, Integer qty) {
+        this.productId = productId;
+        this.name = name;
+        this.image = image;
+        this.price = price;
+        this.qty = qty;
+    }
+
     public String getProductId() {
         return productId;
     }
