@@ -1,6 +1,7 @@
 package com.mathildeclln.sugarshack.service;
 
 import com.mathildeclln.sugarshack.dto.CatalogueItemDto;
+import com.mathildeclln.sugarshack.dto.MapleSyrupDto;
 import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
 import com.mathildeclln.sugarshack.model.MapleType;
 import com.mathildeclln.sugarshack.model.Product;
@@ -16,13 +17,14 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class CatalogueItemServiceTest {
+public class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
     @Mock
@@ -30,24 +32,25 @@ public class CatalogueItemServiceTest {
 
     private ArrayList<Product> products;
     private ArrayList<Stock> stocks;
+
     private ArrayList<CatalogueItemDto> catalogueItems;
 
     @InjectMocks
-    private CatalogueItemService catalogueItemService;
+    private ProductService productService;
 
     @BeforeEach
     public void initialSteps(){
         productRepository = Mockito.mock(ProductRepository.class);
         stockRepository = Mockito.mock(StockRepository.class);
-        catalogueItemService = new CatalogueItemService(productRepository, stockRepository);
+        productService = new ProductService(productRepository, stockRepository);
         products = new ArrayList<>();
         stocks = new ArrayList<>();
 
         Product product1 = new Product("1", "Maple1", "...",
-                                    "img1.jpg", 12.99, MapleType.AMBER);
+                "img1.jpg", 12.99, MapleType.AMBER);
         Stock stock1 = new Stock("1", 10);
         Product product2 = new Product("2", "Maple2", "...",
-                                    "img2.jpg", 14.5, MapleType.AMBER);
+                "img2.jpg", 14.5, MapleType.AMBER);
         Stock stock2 = new Stock("2", 15);
 
         products.add(product1);
@@ -62,7 +65,7 @@ public class CatalogueItemServiceTest {
         given(stockRepository.findByProductId(stocks.get(0).getProductId())).willReturn(stocks.get(0));
         given(stockRepository.findByProductId(stocks.get(1).getProductId())).willReturn(stocks.get(1));
 
-        catalogueItems = catalogueItemService.getCatalogue(MapleType.AMBER);
+        catalogueItems = productService.getCatalogue(MapleType.AMBER);
 
         assertThat(catalogueItems).isNotNull();
         assertThat(catalogueItems.size()).isEqualTo(2);
@@ -88,7 +91,7 @@ public class CatalogueItemServiceTest {
 
         given(productRepository.findAllByType(MapleType.DARK)).willReturn(emptyProductList);
 
-        catalogueItems = catalogueItemService.getCatalogue(MapleType.DARK);
+        catalogueItems = productService.getCatalogue(MapleType.DARK);
 
         assertThat(catalogueItems).isNotNull();
         assertThat(catalogueItems.isEmpty()).isTrue();
@@ -98,12 +101,39 @@ public class CatalogueItemServiceTest {
     public void getCatalogueExceptionTest(){
         ArrayList<Product> exceptionProductList = new ArrayList<>();
         exceptionProductList.add(new Product("3", "Maple3", "...",
-                                            "image3.jpg", 10.7, MapleType.CLEAR));
+                "image3.jpg", 10.7, MapleType.CLEAR));
 
         given(productRepository.findAllByType(exceptionProductList.get(0).getType())).willReturn(exceptionProductList);
         given(stockRepository.findByProductId(exceptionProductList.get(0).getId())).willReturn(null);
 
         assertThrows(ProductNotFoundException.class,
-                () -> catalogueItemService.getCatalogue(exceptionProductList.get(0).getType()));
+                () -> productService.getCatalogue(exceptionProductList.get(0).getType()));
+    }
+
+    @Test
+    public void getInfoHappyPathTest(){
+        MapleSyrupDto mapleSyrup;
+
+        given(productRepository.findById(products.get(0).getId())).willReturn(Optional.ofNullable(products.get(0)));
+        given(stockRepository.findByProductId(stocks.get(0).getProductId())).willReturn(stocks.get(0));
+
+        mapleSyrup = productService.getInfo(products.get(0).getId());
+
+        assertThat(mapleSyrup).isNotNull();
+        assertThat(mapleSyrup.getId()).isEqualTo(products.get(0).getId());
+        assertThat(mapleSyrup.getName()).isEqualTo(products.get(0).getName());
+        assertThat(mapleSyrup.getDescription()).isEqualTo(products.get(0).getDescription());
+        assertThat(mapleSyrup.getImage()).isEqualTo(products.get(0).getImage());
+        assertThat(mapleSyrup.getPrice()).isEqualTo(products.get(0).getPrice());
+        assertThat(mapleSyrup.getType()).isEqualTo(products.get(0).getType());
+        assertThat(mapleSyrup.getStock()).isEqualTo(stocks.get(0).getStock());
+    }
+
+    @Test
+    public void getInfoExceptionTest(){
+        given(productRepository.findById("4")).willReturn(Optional.empty());
+
+        assertThrows(ProductNotFoundException.class,
+                () -> productService.getInfo("4"));
     }
 }

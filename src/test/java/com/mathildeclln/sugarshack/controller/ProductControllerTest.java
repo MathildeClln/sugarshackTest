@@ -4,9 +4,8 @@ import com.mathildeclln.sugarshack.dto.CatalogueItemDto;
 import com.mathildeclln.sugarshack.dto.MapleSyrupDto;
 import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
 import com.mathildeclln.sugarshack.model.MapleType;
-import com.mathildeclln.sugarshack.service.CatalogueItemService;
+import com.mathildeclln.sugarshack.service.ProductService;
 import org.junit.jupiter.api.Test;
-import com.mathildeclln.sugarshack.service.MapleSyrupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,17 +26,14 @@ public class ProductControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private MapleSyrupService mapleSyrupService;
-
-    @MockBean
-    private CatalogueItemService catalogueItemService;
+    private ProductService productService;
 
     @Test
     public void getProductInfoTest() throws Exception {
         MapleSyrupDto mapleSyrup = new MapleSyrupDto("1", "Maple1", "...",
                                         "img", 10, 7, MapleType.AMBER);
 
-        given(mapleSyrupService.getInfo(mapleSyrup.getId())).willReturn(mapleSyrup);
+        given(productService.getInfo(mapleSyrup.getId())).willReturn(mapleSyrup);
 
         ResultActions result = mockMvc.perform(get("/products/{productId}", mapleSyrup.getId()));
 
@@ -53,7 +49,7 @@ public class ProductControllerTest {
 
     @Test
     public void getProductInfoNotFoundExceptionTest() throws Exception{
-        given(mapleSyrupService.getInfo("4")).willThrow(ProductNotFoundException.class);
+        given(productService.getInfo("4")).willThrow(ProductNotFoundException.class);
 
         ResultActions result = mockMvc.perform(get("/products/{productId}", "4"));
 
@@ -71,7 +67,7 @@ public class ProductControllerTest {
         catalogueItems.add(itemClear);
         catalogueItems.add(itemClear2);
 
-        given(catalogueItemService.getCatalogue(itemClear.getType())).willReturn(catalogueItems);
+        given(productService.getCatalogue(itemClear.getType())).willReturn(catalogueItems);
 
         ResultActions result = mockMvc.perform(get("/products")
                                                 .param("type", itemClear.getType().name()));
@@ -96,7 +92,7 @@ public class ProductControllerTest {
 
     @Test
     public void getCatalogueNotFoundExceptionTest() throws Exception{
-        given(catalogueItemService.getCatalogue(MapleType.DARK)).willThrow(ProductNotFoundException.class);
+        given(productService.getCatalogue(MapleType.DARK)).willThrow(ProductNotFoundException.class);
 
         ResultActions result = mockMvc.perform(get("/products")
                 .param("type", MapleType.DARK.name()));

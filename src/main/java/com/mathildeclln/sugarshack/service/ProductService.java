@@ -1,8 +1,9 @@
 package com.mathildeclln.sugarshack.service;
 
+import com.mathildeclln.sugarshack.dto.CatalogueItemDto;
+import com.mathildeclln.sugarshack.dto.MapleSyrupDto;
 import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
 import com.mathildeclln.sugarshack.model.MapleType;
-import com.mathildeclln.sugarshack.dto.CatalogueItemDto;
 import com.mathildeclln.sugarshack.model.Product;
 import com.mathildeclln.sugarshack.model.Stock;
 import com.mathildeclln.sugarshack.repository.ProductRepository;
@@ -13,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
-@NoArgsConstructor @AllArgsConstructor
-public class CatalogueItemService {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ProductService {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
@@ -36,6 +39,20 @@ public class CatalogueItemService {
             else{
                 throw new ProductNotFoundException(product.getId());
             }
+        }
+        return result;
+    }
+
+    public MapleSyrupDto getInfo(String productId){
+        MapleSyrupDto       result;
+        Optional<Product> product = productRepository.findById(productId);
+        Stock               stock = stockRepository.findByProductId(productId);
+
+        if(product.isEmpty() || stock == null) {
+            throw new ProductNotFoundException(productId);
+        }
+        else {
+            result = new MapleSyrupDto(product.get(), stock);
         }
         return result;
     }
