@@ -1,34 +1,17 @@
 package com.mathildeclln.sugarshack.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
 
 @Entity
-@AllArgsConstructor
+@AllArgsConstructor @NoArgsConstructor @Getter @Setter
 @Builder
 public class OrderLine {
     @Id
     private String productId;
+    @Nullable
     private int qty;
 
-    public OrderLine() {
-    }
-
-    public String getProductId() {
-        return productId;
-    }
-
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
-
-    public int getQty() {
-        return qty;
-    }
-
-    public void setQty(int qty) {
-        this.qty = qty;
-    }
 
 }

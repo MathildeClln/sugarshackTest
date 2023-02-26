@@ -1,30 +1,11 @@
 package com.mathildeclln.sugarshack.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter @AllArgsConstructor
 public class OrderLineDto {
     private String productId;
     private int qty;
-
-    public OrderLineDto() {
-    }
-
-    public OrderLineDto(String productId, int qty) {
-        this.productId = productId;
-        this.qty = qty;
-    }
-
-    public String getProductId() {
-        return productId;
-    }
-
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
-
-    public int getQty() {
-        return qty;
-    }
-
-    public void setQty(int qty) {
-        this.qty = qty;
-    }
 }

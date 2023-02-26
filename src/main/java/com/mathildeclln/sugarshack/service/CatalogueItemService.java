@@ -7,25 +7,20 @@ import com.mathildeclln.sugarshack.model.Product;
 import com.mathildeclln.sugarshack.model.Stock;
 import com.mathildeclln.sugarshack.repository.ProductRepository;
 import com.mathildeclln.sugarshack.repository.StockRepository;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Service
+@NoArgsConstructor @AllArgsConstructor
 public class CatalogueItemService {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
     private StockRepository stockRepository;
-
-    public CatalogueItemService() {
-    }
-
-    public CatalogueItemService(ProductRepository productRepository, StockRepository stockRepository) {
-        this.productRepository = productRepository;
-        this.stockRepository = stockRepository;
-    }
 
     public ArrayList<CatalogueItemDto> getCatalogue(MapleType type){
         ArrayList<CatalogueItemDto> result = new ArrayList<>();

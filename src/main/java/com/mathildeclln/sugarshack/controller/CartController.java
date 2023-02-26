@@ -11,26 +11,29 @@ import java.util.ArrayList;
 @RequestMapping("/cart")
 public class CartController {
     @Autowired
-    private CartLineService cartService;
+    private CartLineService cartLineService;
 
     @GetMapping
     public ArrayList<CartLineDto> getCart(){
-        return cartService.getCart();
+
+        return cartLineService.getCart();
     }
 
     @PutMapping
     public void addToCart(String productId){
 
-        cartService.addToCart(productId);
+        cartLineService.addToCart(productId);
     }
 
     @DeleteMapping
     public void removeFromCart(String productId){
-        cartService.removeFromCart(productId);
+
+        cartLineService.removeFromCart(productId);
     }
 
     @PatchMapping
     public void changeQty(String productId, int newQty){
-        cartService.changeQty(productId, newQty);
+
+        cartLineService.changeQty(productId, newQty);
     }
 }

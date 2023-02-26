@@ -1,33 +1,14 @@
 package com.mathildeclln.sugarshack.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 
+@Getter @Setter @AllArgsConstructor
 public class OrderValidationResponseDto {
 
     private boolean isOrderValid;
     private ArrayList<String> errors;
-
-    public OrderValidationResponseDto() {
-    }
-
-    public OrderValidationResponseDto(boolean isOrderValid, ArrayList<String> errors) {
-        this.isOrderValid = isOrderValid;
-        this.errors = errors;
-    }
-
-    public boolean isOrderValid() {
-        return isOrderValid;
-    }
-
-    public void setOrderValid(boolean orderValid) {
-        isOrderValid = orderValid;
-    }
-
-    public ArrayList<String> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(ArrayList<String> errors) {
-        this.errors = errors;
-    }
 }

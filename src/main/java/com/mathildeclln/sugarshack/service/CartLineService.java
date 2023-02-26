@@ -7,6 +7,7 @@ import com.mathildeclln.sugarshack.model.OrderLine;
 import com.mathildeclln.sugarshack.model.Product;
 import com.mathildeclln.sugarshack.repository.OrderLineRepository;
 import com.mathildeclln.sugarshack.repository.ProductRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,16 +17,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class CartLineService {
     @Autowired
     private OrderLineRepository orderLineRepository;
     @Autowired
     private ProductRepository productRepository;
-
-    public CartLineService(OrderLineRepository orderLineRepository, ProductRepository productRepository){
-        this.orderLineRepository = orderLineRepository;
-        this.productRepository = productRepository;
-    }
 
     public ArrayList<CartLineDto> getCart() throws ProductNotFoundException {
         ArrayList<CartLineDto>  result = new ArrayList<>();
@@ -38,9 +35,9 @@ public class CartLineService {
                 throw new ProductNotFoundException(orderLine.getProductId());
             }
             else {
-                CartLineDto c = new CartLineDto(optionalProduct.get(), orderLine);
+                CartLineDto cartLine = new CartLineDto(optionalProduct.get(), orderLine);
 
-                result.add(c);
+                result.add(cartLine);
             }
         }
         return result;
@@ -90,12 +87,12 @@ public class CartLineService {
     }
 
     public void changeQty(String productId, int newQty){
-        OrderLine line = orderLineRepository.findByProductId(productId);
+        OrderLine orderLine = orderLineRepository.findByProductId(productId);
 
-        if(line != null){
+        if(orderLine != null){
             if(newQty > 0){
-                line.setQty(newQty);
-                orderLineRepository.save(line);
+                orderLine.setQty(newQty);
+                orderLineRepository.save(orderLine);
             } else if (newQty == 0) {
                 orderLineRepository.deleteByProductId(productId);
             }

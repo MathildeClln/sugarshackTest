@@ -6,6 +6,7 @@ import com.mathildeclln.sugarshack.model.Product;
 import com.mathildeclln.sugarshack.model.Stock;
 import com.mathildeclln.sugarshack.repository.ProductRepository;
 import com.mathildeclln.sugarshack.repository.StockRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +14,13 @@ import java.util.Optional;
 
 
 @Service
+@AllArgsConstructor
 public class MapleSyrupService {
 
     @Autowired
     private ProductRepository productRepository;
     @Autowired
     private StockRepository stockRepository;
-
-    public MapleSyrupService(ProductRepository productRepository, StockRepository stockRepository) {
-        this.productRepository = productRepository;
-        this.stockRepository = stockRepository;
-    }
 
     public MapleSyrupDto getInfo(String productId){
         MapleSyrupDto       result;

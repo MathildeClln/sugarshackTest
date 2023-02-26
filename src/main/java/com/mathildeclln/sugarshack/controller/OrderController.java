@@ -22,7 +22,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public OrderValidationResponseDto placeOrder(@RequestBody ArrayList<OrderLineDto> lines){
-        return orderLineService.placeOrder(lines);
+    public OrderValidationResponseDto placeOrder(@RequestBody ArrayList<OrderLineDto> orderLines){
+        return orderLineService.placeOrder(orderLines);
     }
 }
