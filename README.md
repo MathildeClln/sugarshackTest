@@ -51,7 +51,7 @@ As such, there is one repository for each of the tables in the model layer:
 - An `OrderLineRepository`. 
 
 ### The Controller Layer
-The controller layer defines the APIs of the web application. According to the interface contract, there are three: `/cart`, one for `/product` and one for `/order`.
+The controller layer defines the APIs of the web application. According to the interface contract, there are three: `/cart`, `/product` and `/order`.
 This is the reason why I created three controllers:
 - A `CartController`
 - A `ProductController`
