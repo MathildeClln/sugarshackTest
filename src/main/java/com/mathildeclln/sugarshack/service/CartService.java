@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class CartLineService {
+public class CartService {
     @Autowired
     private OrderLineRepository orderLineRepository;
     @Autowired

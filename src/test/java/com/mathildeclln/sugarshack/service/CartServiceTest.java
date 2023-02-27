@@ -25,14 +25,14 @@ import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class CartLineServiceTest{
+public class CartServiceTest {
 
     @Mock
     private OrderLineRepository orderLineRepository;
     @Mock
     private ProductRepository productRepository;
     @InjectMocks
-    private CartLineService cartLineService;
+    private CartService cartService;
 
     private OrderLine orderLine;
     private Product product;
@@ -42,7 +42,7 @@ public class CartLineServiceTest{
     public void initialSteps(){
         orderLineRepository = Mockito.mock(OrderLineRepository.class);
         productRepository = Mockito.mock(ProductRepository.class);
-        cartLineService = new CartLineService(orderLineRepository, productRepository);
+        cartService = new CartService(orderLineRepository, productRepository);
 
         orderLine = new OrderLine("1", 3);
         product = new Product("1", "Maple1",
@@ -61,7 +61,7 @@ public class CartLineServiceTest{
         given(productRepository.findById(product.getId())).willReturn(Optional.ofNullable(product));
         given(productRepository.findById(product1.getId())).willReturn(Optional.of(product1));
 
-        ArrayList<CartLineDto> cartLines = cartLineService.getCart();
+        ArrayList<CartLineDto> cartLines = cartService.getCart();
 
         assertThat(cartLines).isNotNull();
         assertThat(cartLines.size()).isEqualTo(2);
@@ -79,7 +79,7 @@ public class CartLineServiceTest{
 
         given(orderLineRepository.findAll()).willReturn(Collections.emptyList());
 
-        cartLines = cartLineService.getCart();
+        cartLines = cartService.getCart();
 
         assertThat(cartLines).isNotNull();
         assertThat(cartLines.isEmpty()).isTrue();
@@ -94,7 +94,7 @@ public class CartLineServiceTest{
         given(productRepository.findById(orderLine1.getProductId())).willReturn(Optional.empty());
 
         assertThrows(ProductNotFoundException.class,
-                () -> cartLineService.getCart());
+                () -> cartService.getCart());
     }
 
     @Test
@@ -109,12 +109,12 @@ public class CartLineServiceTest{
         given(productRepository.existsById(productId)).willReturn(true);
         given(orderLineRepository.existsByProductId(productId)).willReturn(false);
 
-        cartLineService.addToCart(productId);
+        cartService.addToCart(productId);
 
         given(orderLineRepository.findByProductId(productId)).willReturn(orderLine2);
         given(productRepository.findById(productId)).willReturn(Optional.of(product2));
 
-        cartLine = cartLineService.getCartLineById(productId);
+        cartLine = cartService.getCartLineById(productId);
 
         assertThat(cartLine.getProductId()).isEqualTo(productId);
         assertThat(cartLine.getPrice()).isEqualTo(product2.getPrice());
@@ -125,9 +125,9 @@ public class CartLineServiceTest{
         // 2. Test to add product already in cart
         given(orderLineRepository.existsByProductId(productId)).willReturn(true);
 
-        cartLineService.addToCart(productId);
+        cartService.addToCart(productId);
 
-        cartLine = cartLineService.getCartLineById(productId);
+        cartLine = cartService.getCartLineById(productId);
 
         assertThat(cartLine.getProductId()).isEqualTo(productId);
         assertThat(cartLine.getPrice()).isEqualTo(product2.getPrice());
@@ -141,18 +141,18 @@ public class CartLineServiceTest{
         given(productRepository.existsById("2")).willReturn(false);
 
         assertThrows(ProductNotFoundException.class,
-                () -> cartLineService.addToCart("2"));
+                () -> cartService.addToCart("2"));
     }
 
     @Test
     public void removeFromCartHappyPathTest(){
         given(orderLineRepository.existsByProductId(orderLine.getProductId())).willReturn(true);
 
-        cartLineService.removeFromCart(orderLine.getProductId());
+        cartService.removeFromCart(orderLine.getProductId());
 
         given(orderLineRepository.findByProductId(orderLine.getProductId())).willReturn(null);
         assertThrows(ProductNotFoundException.class,
-                () -> cartLine = cartLineService.getCartLineById(orderLine.getProductId()));
+                () -> cartLine = cartService.getCartLineById(orderLine.getProductId()));
 
         assertThat(cartLine).isNull();
     }
@@ -162,7 +162,7 @@ public class CartLineServiceTest{
         given(orderLineRepository.existsByProductId("1")).willReturn(false);
 
         assertThrows(ProductNotFoundException.class,
-                () -> cartLineService.removeFromCart("1"));
+                () -> cartService.removeFromCart("1"));
     }
 
     @Test
@@ -170,15 +170,15 @@ public class CartLineServiceTest{
         given(orderLineRepository.findByProductId(orderLine.getProductId())).willReturn(orderLine);
         given(productRepository.findById(product.getId())).willReturn(Optional.ofNullable(product));
 
-        cartLineService.changeQty(orderLine.getProductId(), 4);
-        cartLine = cartLineService.getCartLineById(orderLine.getProductId());
+        cartService.changeQty(orderLine.getProductId(), 4);
+        cartLine = cartService.getCartLineById(orderLine.getProductId());
 
         assertThat(cartLine).isNotNull();
         assertThat(cartLine.getProductId()).isEqualTo(orderLine.getProductId());
         assertThat(cartLine.getQty()).isEqualTo(4);
 
-        cartLineService.changeQty(orderLine.getProductId(), 3);
-        cartLine = cartLineService.getCartLineById(orderLine.getProductId());
+        cartService.changeQty(orderLine.getProductId(), 3);
+        cartLine = cartService.getCartLineById(orderLine.getProductId());
 
         assertThat(cartLine).isNotNull();
         assertThat(cartLine.getProductId()).isEqualTo(orderLine.getProductId());
@@ -188,11 +188,11 @@ public class CartLineServiceTest{
     @Test
     public void changeQtyToZeroTest(){
         given(orderLineRepository.findByProductId(orderLine.getProductId())).willReturn(orderLine);
-        cartLineService.changeQty(orderLine.getProductId(), 0);
+        cartService.changeQty(orderLine.getProductId(), 0);
 
         given(orderLineRepository.findByProductId(orderLine.getProductId())).willReturn(null);
         assertThrows(ProductNotFoundException.class,
-                () -> cartLine = cartLineService.getCartLineById(orderLine.getProductId()));
+                () -> cartLine = cartService.getCartLineById(orderLine.getProductId()));
 
         assertThat(cartLine).isNull();
     }
@@ -201,13 +201,13 @@ public class CartLineServiceTest{
     public void changeQtyInvalidQtyExceptionTest(){
         given(orderLineRepository.findByProductId(orderLine.getProductId())).willReturn(orderLine);
         assertThrows(InvalidQuantityException.class,
-                () -> cartLineService.changeQty(orderLine.getProductId(), -1));
+                () -> cartService.changeQty(orderLine.getProductId(), -1));
     }
 
     @Test
     public void changeQtyProductNotFoundExceptionTest(){
         given(orderLineRepository.findByProductId("1")).willReturn(null);
         assertThrows(ProductNotFoundException.class,
-                () -> cartLineService.changeQty("1", 5));
+                () -> cartService.changeQty("1", 5));
     }
 }

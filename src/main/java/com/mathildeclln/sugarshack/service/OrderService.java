@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 @Service
 @AllArgsConstructor
-public class OrderLineService {
+public class OrderService{
     @Autowired
     private StockRepository stockRepository;
 

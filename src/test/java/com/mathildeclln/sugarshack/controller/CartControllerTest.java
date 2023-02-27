@@ -3,7 +3,7 @@ package com.mathildeclln.sugarshack.controller;
 import com.mathildeclln.sugarshack.dto.CartLineDto;
 import com.mathildeclln.sugarshack.exception.InvalidQuantityException;
 import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
-import com.mathildeclln.sugarshack.service.CartLineService;
+import com.mathildeclln.sugarshack.service.CartService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,7 +25,7 @@ public class CartControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CartLineService cartService;
+    private CartService cartService;
 
     @Test
     public void getCartTest() throws Exception {

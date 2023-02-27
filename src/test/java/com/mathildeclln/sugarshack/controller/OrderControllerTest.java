@@ -5,7 +5,7 @@ import com.mathildeclln.sugarshack.dto.OrderLineDto;
 import com.mathildeclln.sugarshack.dto.OrderValidationResponseDto;
 import com.mathildeclln.sugarshack.exception.InvalidQuantityException;
 import com.mathildeclln.sugarshack.exception.ProductNotFoundException;
-import com.mathildeclln.sugarshack.service.OrderLineService;
+import com.mathildeclln.sugarshack.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,7 +29,7 @@ public class OrderControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private OrderLineService orderLineService;
+    private OrderService orderService;
 
     @Test
     public void placeOrderValidTest() throws Exception {
@@ -39,7 +39,7 @@ public class OrderControllerTest {
         OrderValidationResponseDto orderValidationResponse =
                 new OrderValidationResponseDto(true, new ArrayList<>());
 
-        given(orderLineService.placeOrder(any())).willReturn(orderValidationResponse);
+        given(orderService.placeOrder(any())).willReturn(orderValidationResponse);
 
         ResultActions result = mockMvc.perform(post("/order")
                 .content(asJsonString(orderLines))
@@ -68,7 +68,7 @@ public class OrderControllerTest {
         OrderValidationResponseDto orderValidationResponse =
                 new OrderValidationResponseDto(false, errors);
 
-        given(orderLineService.placeOrder(any())).willReturn(orderValidationResponse);
+        given(orderService.placeOrder(any())).willReturn(orderValidationResponse);
 
         ResultActions result = mockMvc.perform(post("/order")
                 .content(asJsonString(orderLines))
@@ -87,7 +87,7 @@ public class OrderControllerTest {
         ArrayList<OrderLineDto> orderLines = new ArrayList<>();
         orderLines.add(orderLineValid);
 
-        given(orderLineService.placeOrder(any())).willThrow(InvalidQuantityException.class);
+        given(orderService.placeOrder(any())).willThrow(InvalidQuantityException.class);
 
         ResultActions result = mockMvc.perform(post("/order")
                 .content(asJsonString(orderLines))
@@ -103,7 +103,7 @@ public class OrderControllerTest {
         ArrayList<OrderLineDto> orderLines = new ArrayList<>();
         orderLines.add(orderLineValid);
 
-        given(orderLineService.placeOrder(any())).willThrow(ProductNotFoundException.class);
+        given(orderService.placeOrder(any())).willThrow(ProductNotFoundException.class);
 
         ResultActions result = mockMvc.perform(post("/order")
                 .content(asJsonString(orderLines))
